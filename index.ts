@@ -46,8 +46,6 @@ export async function action(manifest: string, moduleName: string, options: Acti
     substreams.on("anyMessage", async (message: any) => {
 
         await queue.add(() => discordBot.sendMessage(channelId, JSON.stringify(message)));
-
-        logger.info(JSON.stringify({ message: message }));
     });
 
     substreams.start(options.delayBeforeStart);

@@ -1,5 +1,5 @@
 import { logger } from "substreams-sink";
-import { Client, TextChannel, User } from "discord.js";
+import { Client, TextChannel, User, DiscordAPIError } from "discord.js";
 
 import { timeout } from "./utils";
 
@@ -25,16 +25,16 @@ export class Discord {
         try {
             // Check in cache
             // ...
+
             // Or fetch
             await (await this.client.channels.fetch(channelId) as TextChannel).send(message);
             // await (await this.client.users.fetch(userId)).send(message);
-        } catch (error: any) {
+
+            logger.info(message);
+        } catch (error: any | DiscordAPIError) {
             // Need to handle discord errors
-            if (error.code === '') {
-                switch (error.response.statusCode) {
-                    default:
-                        break;
-                }
+            if (error instanceof DiscordAPIError) {
+                logger.error({ status: error.status, code: error.code, message: error.message });
             } else {
                 logger.error('failed to send message');
             }
