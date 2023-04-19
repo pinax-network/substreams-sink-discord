@@ -14,6 +14,7 @@ export const DEFAULT_DISCORD_API_TOKEN_ENV = 'DISCORD_API_TOKEN';
 
 // Custom user options interface
 interface ActionOptions extends RunOptions {
+    channelId: string,
     discordApiTokenEnvvar: string,
     discordApiToken: string,
 }
@@ -23,7 +24,7 @@ export async function action(manifest: string, moduleName: string, options: Acti
     const spkg = await download(manifest);
 
     // Get command options
-    const { discordApiTokenEnvvar, discordApiToken } = options;
+    const { channelId, discordApiTokenEnvvar, discordApiToken } = options;
 
     // Discord options
     const discord_api_token = discordApiToken ?? process.env[discordApiTokenEnvvar];
@@ -34,7 +35,8 @@ export async function action(manifest: string, moduleName: string, options: Acti
     }
 
     // Initialize Discord bot
-    const discordBot = new Discord(discord_api_token);
+    const discordBot = new Discord();
+    await discordBot.init(discord_api_token);
 
     // Run substreams
     const substreams = run(spkg, moduleName, options);
@@ -42,6 +44,9 @@ export async function action(manifest: string, moduleName: string, options: Acti
     const queue = new PQueue({ concurrency: 1, intervalCap: 1, interval: 1000 });
 
     substreams.on("anyMessage", async (message: any) => {
+
+        await queue.add(() => discordBot.sendMessage(channelId, JSON.stringify(message)));
+
         logger.info(JSON.stringify({ message: message }));
     });
 
