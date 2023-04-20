@@ -24,15 +24,16 @@ export class Discord {
     public async sendMessage(channelId: string, message: string) {
         try {
             // Check in cache
-            // ...
+            let channel: TextChannel = this.client.channels.cache.get(channelId) as TextChannel;
 
             // Or fetch
-            await (await this.client.channels.fetch(channelId) as TextChannel).send(message);
-            // await (await this.client.users.fetch(userId)).send(message);
+            if (!channel)
+                await this.client.channels.fetch(channelId) as TextChannel
+
+            await channel.send(message);
 
             logger.info(message);
         } catch (error: any | DiscordAPIError) {
-            // Need to handle discord errors
             if (error instanceof DiscordAPIError) {
                 logger.error({ status: error.status, code: error.code, message: error.message });
             } else {
