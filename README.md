@@ -33,10 +33,40 @@ $ npm install -g substreams-sink-discord
 $ substreams-sink-discord run [options] <spkg>
 ```
 
+### Formatting
+Supports `JSON` and `YAML` format for configuration file. Example of `config.json` format configuration file:
+
+```json
+[
+    {
+        "entity": "Transfer",
+        "chat_ids": [
+            "1098279427617603636"
+        ],
+        "message": "This **{user_id}** made a __transaction__ with id `{trx_id}`"
+    },
+    {
+        "entity": "Grants",
+        "chat_ids": [
+            "1098279427617603636"
+        ],
+        "message": "This ||{grant}||"
+    }
+]
+```
+
+Text between `{}` are field names and are used as labels for message templating. In the example above, all `EntityChanges` messages coming from the substream with `entity` key having `Transfer` as value, will be sent to [Discord](https://discord.com/) chat with id `1098279427617603636`, as specified in the first json object.
+
 ## Features
+
+### Substreams
 
 - Consume `*.spkg` from:
   - [x] Load URL or IPFS
   - [ ] Read from `*.spkg` local filesystem
   - [ ] Read from `substreams.yaml` local filesystem
 - [x] Handle `cursor` restart
+
+### Discord
+- [x] Handle rate limit
+- [x] Markdown message parsing

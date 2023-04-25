@@ -1,7 +1,12 @@
 import { logger } from "substreams-sink";
 import { Client, TextChannel, User, DiscordAPIError } from "discord.js";
 
-import { timeout } from "./utils";
+export interface DiscordConfig {
+    entity: string;
+    parse_mode?: string;
+    chat_ids: string[];
+    message: string;
+}
 
 export class Discord {
     private readonly client: Client;
@@ -28,11 +33,11 @@ export class Discord {
 
             // Or fetch
             if (!channel)
-                await this.client.channels.fetch(channelId) as TextChannel
+                channel = await this.client.channels.fetch(channelId) as TextChannel;
 
             await channel.send(message);
 
-            logger.info(message);
+            // await (await this.client.users.fetch(userId)).send(message);
         } catch (error: any | DiscordAPIError) {
             if (error instanceof DiscordAPIError) {
                 logger.error({ status: error.status, code: error.code, message: error.message });
