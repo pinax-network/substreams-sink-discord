@@ -1,14 +1,14 @@
 [
     {
         "entity": "Transfer",
-        "chat_ids": [
-            "1098279427617603636"
+        "channel_ids": [
+            "1100491622422159431"
         ],
         "message": "This **{user_id}** made a __transaction__ with id `{trx_id}`"
     },
     {
         "entity": "Grants",
-        "chat_ids": [
+        "channel_ids": [
             "1098279427617603636"
         ],
         "message": "This ||{grant}||"

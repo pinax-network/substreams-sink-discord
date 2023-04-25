@@ -40,22 +40,25 @@ Supports `JSON` and `YAML` format for configuration file. Example of `config.jso
 [
     {
         "entity": "Transfer",
-        "chat_ids": [
+        "channel_ids": [
             "1098279427617603636"
         ],
         "message": "This **{user_id}** made a __transaction__ with id `{trx_id}`"
     },
     {
         "entity": "Grants",
-        "chat_ids": [
+        "channel_ids": [
             "1098279427617603636"
+        ],
+        "user_ids": [
+            "1098268391271313490"
         ],
         "message": "This ||{grant}||"
     }
 ]
 ```
 
-Text between `{}` are field names and are used as labels for message templating. In the example above, all `EntityChanges` messages coming from the substream with `entity` key having `Transfer` as value, will be sent to [Discord](https://discord.com/) chat with id `1098279427617603636`, as specified in the first json object.
+Text between `{}` are field names and are used as labels for message templating. In the example above, all `EntityChanges` messages coming from the substream with `entity` key having `Transfer` as value, will be sent to [Discord](https://discord.com/) channel or thread with id `1098279427617603636`, as specified in the first json object.
 
 ## Features
 

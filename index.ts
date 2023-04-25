@@ -5,7 +5,7 @@ import YAML from 'yaml'
 import path from "path";
 import PQueue from 'p-queue';
 
-import { Discord, DiscordConfig } from "./src/discord";
+import { ChatType, Discord, DiscordConfig } from "./src/discord";
 
 import pkg from "./package.json";
 
@@ -71,9 +71,17 @@ export async function action(manifest: string, moduleName: string, options: Acti
                         formattedMessage = formattedMessage.replaceAll(`{${field.name}}`, field.newValue?.typed.value as string); // TODO make a null check
                     });
 
-                    conf.chat_ids.forEach(async (chatId: string) => {
-                        await queue.add(() => discordBot.sendMessage(chatId, formattedMessage));
-                    });
+                    if (conf.user_ids) {
+                        conf.user_ids.forEach(async (userId: string) => {
+                            await queue.add(() => discordBot.sendMessage(userId, formattedMessage, ChatType.USER));
+                        });
+                    }
+
+                    if (conf.channel_ids) {
+                        conf.channel_ids.forEach(async (channelId: string) => {
+                            await queue.add(() => discordBot.sendMessage(channelId, formattedMessage, ChatType.CHANNEL));
+                        });
+                    }
                 }
             });
         });

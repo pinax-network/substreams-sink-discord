@@ -1,10 +1,16 @@
 import { logger } from "substreams-sink";
-import { Client, TextChannel, User, DiscordAPIError } from "discord.js";
+import { Client, TextChannel, User, ThreadChannel, DiscordAPIError } from "discord.js";
+
+export enum ChatType {
+    USER,
+    CHANNEL,
+}
 
 export interface DiscordConfig {
     entity: string;
     parse_mode?: string;
-    chat_ids: string[];
+    user_ids: string[];
+    channel_ids: string[];
     message: string;
 }
 
@@ -26,16 +32,32 @@ export class Discord {
         }
     }
 
-    public async sendMessage(channelId: string, message: string) {
+    public async sendMessage(chatId: string, message: string, chatType: ChatType) {
         try {
-            // Check in cache
-            let channel: TextChannel = this.client.channels.cache.get(channelId) as TextChannel;
+            switch (chatType) {
+                case ChatType.USER:
+                    // Check in cache
+                    let user: User = this.client.users.cache.get(chatId) as User;
 
-            // Or fetch
-            if (!channel)
-                channel = await this.client.channels.fetch(channelId) as TextChannel;
+                    // Or fetch
+                    if (!user)
+                        user = await this.client.users.fetch(chatId) as User;
 
-            await channel.send(message);
+                    await user.send(message);
+                    break;
+                case ChatType.CHANNEL:
+                    // Check in cache
+                    let channel: TextChannel | ThreadChannel = this.client.channels.cache.get(chatId) as TextChannel | ThreadChannel;
+
+                    // Or fetch
+                    if (!channel)
+                        channel = await this.client.channels.fetch(chatId) as TextChannel | ThreadChannel;
+
+                    await channel.send(message);
+                    break;
+                default:
+                    break;
+            }
 
             // await (await this.client.users.fetch(userId)).send(message);
         } catch (error: any | DiscordAPIError) {
