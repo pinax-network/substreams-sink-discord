@@ -17,6 +17,8 @@
 
 ### Protobuf
 
+- [`sf.substreams.entity.v1.EntityChanges`](https://github.com/streamingfast/substreams-entity-change/blob/develop/proto/entity/v1/entity.proto)
+
 ## CLI
 [**Use pre-built binaries**](https://github.com/pinax-network/substreams-sink-discord/releases)
 - [x] MacOS
