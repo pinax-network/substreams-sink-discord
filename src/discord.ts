@@ -1,18 +1,28 @@
 import { logger } from "substreams-sink";
 import { Client, TextChannel, User, ThreadChannel, DiscordAPIError } from "discord.js";
+import { z } from "zod";
 
 export enum ChatType {
     USER,
     CHANNEL,
 }
 
-export interface DiscordConfig {
-    entity: string;
-    parse_mode?: string;
-    user_ids: string[];
-    channel_ids: string[];
-    message: string;
-}
+const DiscordConfigSchema = z.object({
+    entity: z.string(),
+    user_ids: z.array(z.string()),
+    channel_ids: z.array(z.string()),
+    message: z.string()
+}).partial({
+    user_ids: true,
+    channel_ids: true,
+}).refine(
+    config => config.user_ids || config.channel_ids,
+    "must provide 'user_ids' or 'channel_ids'",
+);
+
+export const DiscordConfigsSchema = z.array(DiscordConfigSchema);
+export type DiscordConfig = z.infer<typeof DiscordConfigSchema>;
+
 
 export class Discord {
     private readonly client: Client;

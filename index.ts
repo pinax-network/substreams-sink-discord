@@ -1,11 +1,12 @@
 import { EntityChanges, download } from "substreams";
 import { run, logger, RunOptions } from "substreams-sink";
 import fs from "fs";
-import YAML from 'yaml'
+import YAML from "yaml";
 import path from "path";
-import PQueue from 'p-queue';
+import PQueue from "p-queue";
+import { ZodError } from "zod";
 
-import { ChatType, Discord, DiscordConfig } from "./src/discord";
+import { ChatType, Discord, DiscordConfig, DiscordConfigsSchema } from "./src/discord";
 
 import pkg from "./package.json";
 
@@ -34,10 +35,19 @@ export async function action(manifest: string, moduleName: string, options: Acti
     const ext: string = path.extname(config);
     const rawConfigs = fs.readFileSync(config, 'utf-8');
 
-    if (ext === '.json') {
-        configs = JSON.parse(rawConfigs);
-    } else if (ext === '.yml' || ext === '.yaml') {
-        configs = YAML.parse(rawConfigs);
+    try {
+        if (ext === '.json') {
+            configs = DiscordConfigsSchema.parse(JSON.parse(rawConfigs));
+        } else if (ext === '.yml' || ext === '.yaml') {
+            configs = DiscordConfigsSchema.parse(YAML.parse(rawConfigs));
+        }
+    } catch (error) {
+        if (error instanceof ZodError) {
+            logger.error(JSON.stringify(error));
+        } else {
+            logger.error(error);
+        }
+        process.exit(1);
     }
 
     // Discord options
