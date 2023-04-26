@@ -23,7 +23,6 @@ const DiscordConfigSchema = z.object({
 export const DiscordConfigsSchema = z.array(DiscordConfigSchema);
 export type DiscordConfig = z.infer<typeof DiscordConfigSchema>;
 
-
 export class Discord {
     private readonly client: Client;
 
