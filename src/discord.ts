@@ -26,6 +26,8 @@ export type DiscordConfig = z.infer<typeof DiscordConfigSchema>;
 export class Discord {
     private readonly client: Client;
 
+    private isInit: boolean = false;
+
     constructor() {
         this.client = new Client({
             intents: []
@@ -39,9 +41,16 @@ export class Discord {
             logger.error('unable to login to Discord');
             process.exit(1);
         }
+
+        this.isInit = true;
     }
 
     public async sendMessage(chatId: string, message: string, chatType: ChatType) {
+        if (!this.isInit) {
+            logger.error('Discord not initialized. You need to run Discord.init() first.');
+            process.exit(1);
+        }
+
         try {
             switch (chatType) {
                 case ChatType.USER:
