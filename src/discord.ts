@@ -3,10 +3,7 @@ import { Client, TextChannel, User, ThreadChannel, DiscordAPIError } from "disco
 import { z } from "zod";
 
 export const DiscordConfigSchema = z.object({
-    entity: z.string(),
     type: z.enum(['channel', 'user']).default('channel'),
-    chat_ids: z.array(z.string()),
-    message: z.string()
 });
 
 export type DiscordConfig = z.infer<typeof DiscordConfigSchema>;
