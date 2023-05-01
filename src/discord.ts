@@ -2,25 +2,13 @@ import { logger } from "substreams-sink";
 import { Client, TextChannel, User, ThreadChannel, DiscordAPIError } from "discord.js";
 import { z } from "zod";
 
-export enum ChatType {
-    USER,
-    CHANNEL,
-}
-
-const DiscordConfigSchema = z.object({
+export const DiscordConfigSchema = z.object({
     entity: z.string(),
-    user_ids: z.array(z.string()),
-    channel_ids: z.array(z.string()),
+    type: z.enum(['channel', 'user']).default('channel'),
+    chat_ids: z.array(z.string()),
     message: z.string()
-}).partial({
-    user_ids: true,
-    channel_ids: true,
-}).refine(
-    config => config.user_ids || config.channel_ids,
-    "must provide 'user_ids' or 'channel_ids'",
-);
+});
 
-export const DiscordConfigsSchema = z.array(DiscordConfigSchema);
 export type DiscordConfig = z.infer<typeof DiscordConfigSchema>;
 
 export class Discord {
@@ -45,15 +33,15 @@ export class Discord {
         this.isInit = true;
     }
 
-    public async sendMessage(chatId: string, message: string, chatType: ChatType) {
+    public async sendMessage(chatId: string, message: string, config: DiscordConfig) {
         if (!this.isInit) {
             logger.error('Discord not initialized. You need to run Discord.init() first.');
             process.exit(1);
         }
 
         try {
-            switch (chatType) {
-                case ChatType.USER:
+            switch (config.type) {
+                case 'user':
                     // Check in cache
                     let user: User = this.client.users.cache.get(chatId) as User;
 
@@ -63,7 +51,7 @@ export class Discord {
 
                     await user.send(message);
                     break;
-                case ChatType.CHANNEL:
+                case 'channel':
                     // Check in cache
                     let channel: TextChannel | ThreadChannel = this.client.channels.cache.get(chatId) as TextChannel | ThreadChannel;
 
