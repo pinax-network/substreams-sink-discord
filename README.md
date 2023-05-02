@@ -42,18 +42,25 @@ Supports `JSON` and `YAML` format for configuration file. Example of `config.jso
 [
     {
         "entity": "Transfer",
-        "channel_ids": [
+        "type": "channel",
+        "tts": true,
+        "chat_ids": [
             "1098279427617603636"
         ],
-        "message": "This **{user_id}** made a __transaction__ with id `{trx_id}`"
+        "message": "Hello channel! This **{user_id}** made a __transaction__ with id `{trx_id}`"
+    },
+    {
+        "entity": "Transfer",
+        "type": "user",
+        "chat_ids": [
+            "969082968410816632"
+        ],
+        "message": "Hello user! This **{user_id}** made a __transaction__ with id `{trx_id}`"
     },
     {
         "entity": "Grants",
-        "channel_ids": [
+        "chat_ids": [
             "1098279427617603636"
-        ],
-        "user_ids": [
-            "1098268391271313490"
         ],
         "message": "This ||{grant}||"
     }
