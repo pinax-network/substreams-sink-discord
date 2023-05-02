@@ -4,6 +4,7 @@ import { z } from "zod";
 
 export const DiscordConfigSchema = z.object({
     type: z.enum(['channel', 'user']).default('channel'),
+    tts: z.boolean().default(false),
 });
 
 export type DiscordConfig = z.infer<typeof DiscordConfigSchema>;
@@ -37,32 +38,27 @@ export class Discord {
         }
 
         try {
+            let receiver: User | TextChannel | ThreadChannel;
             switch (config.type) {
                 case 'user':
-                    // Check in cache
-                    let user: User = this.client.users.cache.get(chatId) as User;
-
-                    // Or fetch
-                    if (!user)
-                        user = await this.client.users.fetch(chatId) as User;
-
-                    await user.send(message);
+                    // Check in cache for user
+                    receiver = this.client.users.cache.get(chatId) as User;
+                    // Or fetch user
+                    if (!receiver)
+                        receiver = await this.client.users.fetch(chatId) as User;
                     break;
                 case 'channel':
-                    // Check in cache
-                    let channel: TextChannel | ThreadChannel = this.client.channels.cache.get(chatId) as TextChannel | ThreadChannel;
-
-                    // Or fetch
-                    if (!channel)
-                        channel = await this.client.channels.fetch(chatId) as TextChannel | ThreadChannel;
-
-                    await channel.send(message);
+                    // Check in cache for channel
+                    receiver = this.client.channels.cache.get(chatId) as TextChannel | ThreadChannel;
+                    // Or fetch channel
+                    if (!receiver)
+                        receiver = await this.client.channels.fetch(chatId) as TextChannel | ThreadChannel;
                     break;
                 default:
                     break;
             }
 
-            // await (await this.client.users.fetch(userId)).send(message);
+            await receiver!.send({ content: message, tts: config.tts });
         } catch (error: any | DiscordAPIError) {
             if (error instanceof DiscordAPIError) {
                 logger.error({ status: error.status, code: error.code, message: error.message });

@@ -1,5 +1,6 @@
 - entity: Transfer
   type: "channel"
+  tts: true
   chat_ids:
     - "1098279427617603636"
   message: "Hello channel! This **{user_id}** made a __transaction__ with id `{trx_id}`"
