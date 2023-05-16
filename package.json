@@ -39,20 +39,19 @@
         "pkg": "ncc build bin/cli.ts -o build && pkg build/index.js"
     },
     "dependencies": {
-        "commander": "^10.0.0",
-        "discord.js": "^14.9.0",
-        "dotenv": "^16.0.3",
-        "substreams": "^0.5.6",
-        "substreams-sink": "^0.2.0",
-        "substreams-sink-socials": "^0.0.1",
-        "zod": "^3.21.4"
+        "commander": "latest",
+        "discord.js": "latest",
+        "dotenv": "latest",
+        "substreams": "0.7.x",
+        "substreams-sink": "0.3.x",
+        "substreams-sink-socials": "0.0.x",
+        "zod": "latest"
     },
     "devDependencies": {
-        "@vercel/ncc": "^0.36.1",
-        "pkg": "^5.8.1",
-        "ts-node-dev": "^2.0.0",
-        "tsup": "^6.7.0",
-        "typed-emitter": "^2.1.0",
-        "typescript": "^5.0.2"
+        "@tsconfig/recommended": "latest",
+        "@vercel/ncc": "latest",
+        "pkg": "latest",
+        "tsup": "latest",
+        "typescript": "latest"
     }
 }
