@@ -3,6 +3,9 @@ node_modules
 Cargo.lock
 target
 *.js
+*-linux
+*-macos
+*-win.exe
 *-linux-x64
 *-macos-arm64
 *-macos-x64
