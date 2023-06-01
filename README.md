@@ -58,11 +58,15 @@ Supports `JSON` and `YAML` format for configuration file. Example of `config.jso
         "message": "Hello user! This **{user_id}** made a __transaction__ with id `{trx_id}`"
     },
     {
-        "entity": "Grants",
+        "entity": "Grant",
         "chat_ids": [
             "1098279427617603636"
         ],
-        "message": "This ||{grant}||"
+        "message": "This ||{grant}||",
+        "embed": {
+            "title": "Embed message title {user_id}",
+            "description": "Embed message description {user_id}"
+        }
     }
 ]
 ```
@@ -82,3 +86,4 @@ Text between `{}` are field names and are used as labels for message templating.
 ### Discord
 - [x] Handle rate limit
 - [x] Markdown message parsing
+- [x] Embed message support

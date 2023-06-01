@@ -45,8 +45,32 @@ export async function action(manifest: string, moduleName: string, options: Acti
     const substreams = run(spkg, moduleName, options);
 
     substreams.on("anyMessage", async (messages: EntityChanges) => {
-        await social.distributeMessages(messages, (chatId, message, config) => {
-            discordBot.sendMessage(chatId, message, config);
+        messages.entityChanges.forEach(async (entityChange) => {
+            social.configs.forEach(async (conf: any) => {
+                if (entityChange.entity === conf.entity) {
+                    const formattedMessage = social.formatMessage(entityChange, conf.message);
+                    let formattedEmbed: any;
+
+                    if (conf.embed) {
+                        formattedEmbed = JSON.stringify(conf.embed);
+
+                        entityChange.fields.forEach(async (field) => {
+                            formattedEmbed = String(formattedEmbed).replaceAll(`{${field.name}}`, field.newValue?.typed.case === "array" ? field.newValue!.typed.value.value.map(v => (v.typed.value)).join() : field.newValue?.typed.value as string);
+                        });
+
+                        formattedEmbed = JSON.parse(formattedEmbed);
+                    }
+
+                    conf.chat_ids.forEach(async (chatId: string) => {
+                        if (conf.embed) {
+                            await social.queue.add(() => discordBot.sendEmbedMessage(chatId, formattedMessage, formattedEmbed, conf));
+                        } else {
+                            await social.queue.add(() => discordBot.sendTextMessage(chatId, formattedMessage, conf));
+                        }
+
+                    });
+                }
+            });
         });
     });
 

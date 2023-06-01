@@ -1,6 +1,6 @@
 {
     "name": "substreams-sink-discord",
-    "version": "0.1.0",
+    "version": "0.1.1",
     "description": "Substreams discord sink module",
     "main": "dist/index.js",
     "types": "dist/index.d.ts",
