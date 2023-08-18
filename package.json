@@ -1,9 +1,10 @@
 {
     "name": "substreams-sink-discord",
-    "version": "0.1.1",
+    "version": "0.2.0",
     "description": "Substreams discord sink module",
     "main": "dist/index.js",
     "types": "dist/index.d.ts",
+    "type": "module",
     "bin": {
         "substreams-sink-discord": "dist/bin/cli.js"
     },
@@ -34,24 +35,31 @@
     ],
     "license": "MIT OR Apache-2.0",
     "scripts": {
-        "prepublishOnly": "tsc",
-        "build": "tsup index.ts bin/cli.ts --dts",
-        "pkg": "ncc build bin/cli.ts -o build && pkg --target linux-x64,mac-x64,win-x64 --output substreams-sink-discord build/index.js"
+        "start": "tsc && node ./dist/bin/cli.js run",
+        "build": "tsc",
+        "rollup": "rollup --config rollup.config.mjs",
+        "linux": "npm run build && npm run rollup && ./scripts/build.linux.sh",
+        "macos": "npm run build && npm run rollup && ./scripts/build.macos.sh",
+        "windows": "npm run build && npm run rollup && ./scripts/build.windows.sh",
+        "prepublishOnly": "npm run build"
     },
     "dependencies": {
         "commander": "latest",
         "discord.js": "latest",
         "dotenv": "latest",
-        "substreams": "0.7.x",
-        "substreams-sink": "0.3.x",
-        "substreams-sink-socials": "0.0.x",
+        "substreams-sink": "latest",
+        "substreams-sink-socials": "latest",
         "zod": "latest"
     },
     "devDependencies": {
+        "@rollup/plugin-commonjs": "latest",
+        "@rollup/plugin-json": "latest",
+        "@rollup/plugin-node-resolve": "latest",
+        "@rollup/plugin-typescript": "^11.1.2",
         "@tsconfig/recommended": "latest",
-        "@vercel/ncc": "latest",
-        "pkg": "latest",
-        "tsup": "latest",
+        "@types/node": "latest",
+        "rollup": "latest",
+        "tsx": "latest",
         "typescript": "latest"
     }
 }

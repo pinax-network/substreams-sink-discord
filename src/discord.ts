@@ -1,5 +1,5 @@
 import { logger } from "substreams-sink";
-import { Client, TextChannel, User, ThreadChannel, DiscordAPIError, EmbedBuilder, EmbedData, APIEmbed } from "discord.js";
+import { Client, TextChannel, User, ThreadChannel, DiscordAPIError, EmbedBuilder } from "discord.js";
 import { z } from "zod";
 
 export const DiscordConfigSchema = z.object({
