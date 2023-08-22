@@ -1,5 +1,5 @@
 import { setup, logger, commander } from "substreams-sink";
-import { Social, Field } from "substreams-sink-socials";
+import { Social } from "substreams-sink-socials";
 
 import { Discord, DiscordConfigSchema } from "./src/discord.js";
 
@@ -45,20 +45,23 @@ export async function action(options: ActionOptions) {
                         if (conf.embed) {
                             formattedEmbed = JSON.stringify(conf.embed);
 
-                            entityChange.fields.forEach(async (field: Field) => {
-                                formattedEmbed = String(formattedEmbed).replaceAll(`{${field.name}}`, field.newValue?.typed.case === "array" ? field.newValue!.typed.value.value.map(v => (v.typed.value)).join() : field.newValue?.typed.value as string);
+                            entityChange.fields.forEach(async (field: any) => {
+                                formattedEmbed = String(formattedEmbed).replaceAll(`{${field.name}}`, field.newValue?.array ? field.newValue!.array.map((v: any) => (v)).join() : (field.newValue?.string as string || field.newValue?.bool as boolean || field.newValue?.bigint as number || field.newValue?.int32 as number)); // TODO make it cleaner
                             });
 
                             formattedEmbed = JSON.parse(formattedEmbed);
                         }
 
                         conf.chat_ids.forEach(async (chatId: string) => {
+                            if (options.verbose) {
+                                logger.info({ chatId, formattedMessage });
+                            }
+
                             if (conf.embed) {
                                 await social.queue.add(() => discordBot.sendEmbedMessage(chatId, formattedMessage, formattedEmbed, conf));
                             } else {
                                 await social.queue.add(() => discordBot.sendTextMessage(chatId, formattedMessage, conf));
                             }
-
                         });
                     }
                 });

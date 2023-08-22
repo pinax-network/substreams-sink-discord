@@ -55,7 +55,7 @@
         "@rollup/plugin-commonjs": "latest",
         "@rollup/plugin-json": "latest",
         "@rollup/plugin-node-resolve": "latest",
-        "@rollup/plugin-typescript": "^11.1.2",
+        "@rollup/plugin-typescript": "latest",
         "@tsconfig/recommended": "latest",
         "@types/node": "latest",
         "rollup": "latest",
