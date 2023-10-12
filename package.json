@@ -35,7 +35,7 @@
     ],
     "license": "MIT OR Apache-2.0",
     "scripts": {
-        "start": "tsc && node ./dist/bin/cli.js run",
+        "start": "tsc && node ./dist/bin/cli.js",
         "build": "tsc",
         "rollup": "rollup --config rollup.config.mjs",
         "linux": "npm run build && npm run rollup && ./scripts/build.linux.sh",

@@ -3,39 +3,28 @@ import { Social } from "substreams-sink-socials";
 
 import { Discord, DiscordConfigSchema } from "./src/discord.js";
 
-// default discord options
-export const DEFAULT_DISCORD_API_TOKEN_ENV = 'DISCORD_API_TOKEN';
-
 // Custom user options interface
 interface ActionOptions extends commander.RunOptions {
     config: string,
-    discordApiTokenEnvvar: string,
     discordApiToken: string,
 }
 
 export async function action(options: ActionOptions) {
-    const { emitter } = await setup(options);
+    const { emitter, substreamPackage, startCursor, moduleHash } = await setup(options);
 
     // Get command options
-    const { config, discordApiTokenEnvvar, discordApiToken } = options;
+    const { config, discordApiToken } = options;
 
     // Social setup
     let social: Social = new Social(config, DiscordConfigSchema);
 
-    // Discord options
-    const discord_api_token = discordApiToken ?? process.env[discordApiTokenEnvvar];
-
-    if (!discord_api_token) {
-        logger.error('[discord_api_token] is required');
-        process.exit(1);
-    }
-
     // Initialize Discord bot
     const discordBot = new Discord();
-    await discordBot.init(discord_api_token);
+    await discordBot.init(discordApiToken);
 
     emitter.on("anyMessage", (messages) => {
         if (messages.entityChanges) {
+            console.log(messages);
             for (const entityChange of messages.entityChanges as any) {
                 social.configs.forEach(async (conf: any) => {
                     if (entityChange.entity === conf.entity) {
